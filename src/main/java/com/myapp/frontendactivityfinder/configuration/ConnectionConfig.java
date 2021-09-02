@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 //@Component
 //@Getter
-public class ConectionConfig {
-//    @Value("${backend.endpoint}")
+public class ConnectionConfig {
+//    @Value("${http://localhost:8080}")
 //    private String backApiEndpoint;
 }

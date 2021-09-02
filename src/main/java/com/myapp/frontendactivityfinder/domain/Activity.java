@@ -10,8 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Activity {
-    String name;
-    String shortDescription;
-    String favourite;
-
+    private String nazwa;
+    private String opis;
+    private Boolean ulubione;
 }

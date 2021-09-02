@@ -1,6 +1,7 @@
 package com.myapp.frontendactivityfinder.views;
 
 import com.myapp.frontendactivityfinder.domain.Activity;
+import com.myapp.frontendactivityfinder.domain.ActivityService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -10,10 +11,11 @@ import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.Route;
 
-
 @Route
 public class MainView extends VerticalLayout {
 
+    private ActivityService activityService = ActivityService.getInstance();
+    Grid grid = new Grid(Activity.class);
     Button infoBtn = new Button("INFO");
     Button allBtn = new Button("WSZYSTKIE");
     Button favouriteBtn = new Button("ULUBIONE");
@@ -26,12 +28,10 @@ public class MainView extends VerticalLayout {
     RadioButtonGroup<String> whatKindRadioBtn = new RadioButtonGroup<>();
     RadioButtonGroup<String> whereRadioBtn = new RadioButtonGroup<>();
     RadioButtonGroup<String> seasonRadioBtn = new RadioButtonGroup<>();
-    Grid resultsGrid = new Grid(Activity.class);
-    HorizontalLayout upperMenuLt = new HorizontalLayout(infoBtn, allBtn, favouriteBtn, lotteryBtn, planningBtn, minutesField);
-    VerticalLayout filterCol1 = new VerticalLayout(seasonRadioBtn, whatKindRadioBtn, rmvFiltersBtn);
-    VerticalLayout filterCol2 = new VerticalLayout(howManyRadioBtn, whereRadioBtn);
+    HorizontalLayout menuLt = new HorizontalLayout(infoBtn, allBtn, favouriteBtn, lotteryBtn, planningBtn, minutesField);
+    HorizontalLayout bottomLt = new HorizontalLayout(whatKindRadioBtn, rmvFiltersBtn, howManyRadioBtn, whereRadioBtn, seasonRadioBtn, rmvFiltersBtn, searchingBtn);
 
-    public MainView() throws NullPointerException {
+    public MainView() {
         howManyRadioBtn.setLabel("ILE OSÓB:");
         howManyRadioBtn.setItems("1", "2", "Więcej");
         howManyRadioBtn.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
@@ -52,13 +52,19 @@ public class MainView extends VerticalLayout {
         whereRadioBtn.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
         whereRadioBtn.setValue("Na zewnątrz");
 
-        add(upperMenuLt);
+        add(menuLt);
 
-        HorizontalLayout centerLt = new HorizontalLayout(resultsGrid, filterCol1, filterCol2);
-        add(centerLt);
-        centerLt.setSizeFull();
-        resultsGrid.setWidth("550%");
-        add(searchingBtn);
+        grid.setColumns("nazwa", "opis", "ulubione");
+        grid.setWidth("100%");
+        add(grid);
+        refresh();
+
+        add(bottomLt);
+
+    }
+
+    public void refresh() {
+        grid.setItems(activityService.getActivities());
     }
 
 }
