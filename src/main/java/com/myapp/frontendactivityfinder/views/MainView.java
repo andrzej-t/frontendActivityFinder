@@ -2,7 +2,6 @@ package com.myapp.frontendactivityfinder.views;
 
 import com.myapp.frontendactivityfinder.client.BackendClient;
 import com.myapp.frontendactivityfinder.domain.Activity;
-import com.myapp.frontendactivityfinder.domain.ActivityService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -11,13 +10,9 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.Route;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Route
 public class MainView extends VerticalLayout {
-//    @Autowired
-//    private ActivityService activityService;
-//    private ActivityService activityService = ActivityService.getInstance();
 
     private BackendClient backendClient;
 
@@ -62,17 +57,18 @@ public class MainView extends VerticalLayout {
 
         add(menuLt);
 
-        grid.setColumns("name", "description", "minTime");
+        grid.setColumns("name", "description", "favourite");
+        grid.getColumnByKey("name").setHeader("Nazwa");
+        grid.getColumnByKey("description").setHeader("Opis");
+        grid.getColumnByKey("favourite").setHeader("Ulubione");
         grid.setWidth("100%");
         add(grid);
         refresh();
 
         add(bottomLt);
-
     }
 
     public void refresh() {
         grid.setItems(backendClient.getAllActivities());
     }
-
 }
