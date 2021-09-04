@@ -69,6 +69,6 @@ public class MainView extends VerticalLayout {
     }
 
     public void refresh() {
-        grid.setItems(backendClient.getAllActivities());
+        grid.setItems(backendClient.getInCarActivities());
     }
 }
