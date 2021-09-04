@@ -2,14 +2,11 @@ package com.myapp.frontendactivityfinder.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @AllArgsConstructor
-@NoArgsConstructor
-public class Activity {
+public class ActivityDto {
+
     private Long id;
     private String name;
     private String description;
@@ -27,5 +24,4 @@ public class Activity {
     private Boolean art;
     private Boolean motion;
     private Boolean favourite;
-
 }

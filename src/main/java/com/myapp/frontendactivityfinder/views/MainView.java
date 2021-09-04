@@ -1,5 +1,6 @@
 package com.myapp.frontendactivityfinder.views;
 
+import com.myapp.frontendactivityfinder.client.BackendClient;
 import com.myapp.frontendactivityfinder.domain.Activity;
 import com.myapp.frontendactivityfinder.domain.ActivityService;
 import com.vaadin.flow.component.button.Button;
@@ -10,11 +11,16 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.Route;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Route
 public class MainView extends VerticalLayout {
+//    @Autowired
+//    private ActivityService activityService;
+//    private ActivityService activityService = ActivityService.getInstance();
 
-    private ActivityService activityService = ActivityService.getInstance();
+    private BackendClient backendClient;
+
     Grid grid = new Grid(Activity.class);
     Button infoBtn = new Button("INFO");
     Button allBtn = new Button("WSZYSTKIE");
@@ -31,7 +37,9 @@ public class MainView extends VerticalLayout {
     HorizontalLayout menuLt = new HorizontalLayout(infoBtn, allBtn, favouriteBtn, lotteryBtn, planningBtn, minutesField);
     HorizontalLayout bottomLt = new HorizontalLayout(whatKindRadioBtn, rmvFiltersBtn, howManyRadioBtn, whereRadioBtn, seasonRadioBtn, rmvFiltersBtn, searchingBtn);
 
-    public MainView() {
+    public MainView(BackendClient backendClient) {
+        this.backendClient=backendClient;
+
         howManyRadioBtn.setLabel("ILE OSÓB:");
         howManyRadioBtn.setItems("1", "2", "Więcej");
         howManyRadioBtn.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
@@ -54,7 +62,7 @@ public class MainView extends VerticalLayout {
 
         add(menuLt);
 
-        grid.setColumns("nazwa", "opis", "ulubione");
+        grid.setColumns("name", "description", "minTime");
         grid.setWidth("100%");
         add(grid);
         refresh();
@@ -64,7 +72,7 @@ public class MainView extends VerticalLayout {
     }
 
     public void refresh() {
-        grid.setItems(activityService.getActivities());
+        grid.setItems(backendClient.getAllActivities());
     }
 
 }

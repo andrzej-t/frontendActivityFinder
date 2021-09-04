@@ -8,26 +8,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.net.URI;
+import java.util.*;
 
-//@Service
-//@RequiredArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class BackendClient {
-//    private final RestTemplate restTemplate;
-//    private final ConnectionConfig connectionConfig;
-//    private static final Logger LOGGER = LoggerFactory.getLogger(BackendClient.class);
-//
-//    public List<Activity> getAllActivities() {
-//        try {
-//            Optional<Activity[]> boardsResponse = Optional.ofNullable(restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/activities", Activity[].class));
-//            return Arrays.asList(boardsResponse.orElse(new Activity[0]));
-//        } catch (RestClientException e) {
-//            LOGGER.error(e.getMessage(), e);
-//            return new ArrayList<>();
-//        }
-//    }
+    private final RestTemplate restTemplate;
+    private final ConnectionConfig connectionConfig;
+    private static final Logger LOGGER = LoggerFactory.getLogger(BackendClient.class);
+
+    public List<Activity> getAllActivities() {
+        try {
+            Optional<Activity[]> boardsResponse = Optional.ofNullable(restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/activities", Activity[].class));
+            return Arrays.asList(boardsResponse.orElse(new Activity[0]));
+        } catch (RestClientException e) {
+            LOGGER.error(e.getMessage(), e);
+            return new ArrayList<>();
+        }
+    }
 }
