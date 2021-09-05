@@ -27,6 +27,16 @@ public class BackendClient {
         }
     }
 
+    public List<Activity> getNameActivities() {
+        try {
+            Optional<Activity[]> boardsResponse = Optional.ofNullable(restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/name", Activity[].class));
+            return Arrays.asList(boardsResponse.orElse(new Activity[0]));
+        } catch (RestClientException e) {
+            LOGGER.error(e.getMessage(), e);
+            return new ArrayList<>();
+        }
+    }
+
     public List<Activity> getWinterActivities() {
         try {
             Optional<Activity[]> boardsResponse = Optional.ofNullable(restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/winter", Activity[].class));
