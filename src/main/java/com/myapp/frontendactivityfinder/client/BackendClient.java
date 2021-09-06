@@ -5,12 +5,13 @@ import com.myapp.frontendactivityfinder.domain.Activity;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import java.util.*;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class BackendClient {
     private final RestTemplate restTemplate;
@@ -26,8 +27,6 @@ public class BackendClient {
             return new ArrayList<>();
         }
     }
-
-
 
     public List<Activity> getNameActivities() {
         try {

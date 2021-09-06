@@ -1,10 +1,12 @@
 package com.myapp.frontendactivityfinder.configuration;
 
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @Getter
 public class ConnectionConfig {
-    private String backApiEndpoint="http://localhost:8080/v1";
+    @Value("${back.api.endpoint}")
+    private String backApiEndpoint;
 }
