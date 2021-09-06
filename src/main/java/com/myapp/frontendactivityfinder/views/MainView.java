@@ -5,6 +5,9 @@ import com.myapp.frontendactivityfinder.domain.Activity;
 import com.myapp.frontendactivityfinder.service.ActivityService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.NativeButton;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
@@ -28,8 +31,14 @@ public class MainView extends VerticalLayout {
     @Autowired
     private BackendClient backendClient;
 
+    Span content = new Span("Witaj w aplikacji ACTIVITY FINDER! \n Jest to narzędzie służące do wyszukiwania wszelkich aktywności, które \n" +
+                "pomogą skutecznie zorganizować wolny czas dla waszych pociech. \n Znajdziecie tu propozycje zarówno wspólnych rodzinnych zabaw, jak i \n" +
+                "zajęć które dziecko może wykonywać samodzielnie.");
+    NativeButton buttonInside = new NativeButton("Zamknij tutaj");
+    Notification notification = new Notification(content, buttonInside);
+
     Grid grid = new Grid(Activity.class);
-    Button infoBtn = new Button("INFO");
+    Button infoBtn = new Button("INFO", event -> { notification.setOpened(true); });
     Button allBtn = new Button("WSZYSTKIE", event -> {
         getGrid().setItems(backendClient.getAllActivities());
     });
@@ -58,6 +67,10 @@ public class MainView extends VerticalLayout {
 
     public MainView(BackendClient backendClient) {
         this.backendClient=backendClient;
+
+        notification.setDuration(30000);
+        buttonInside.addClickListener(event -> notification.close());
+        notification.setPosition(Notification.Position.MIDDLE);
 
         howManyRadioBtn.setLabel("ILE OSÓB:");
         howManyRadioBtn.setItems("1", "2", "Więcej");
