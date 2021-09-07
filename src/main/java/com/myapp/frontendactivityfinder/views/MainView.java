@@ -4,8 +4,7 @@ import com.myapp.frontendactivityfinder.client.BackendClient;
 import com.myapp.frontendactivityfinder.domain.Activity;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.NativeButton;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -13,6 +12,8 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.NativeButtonRenderer;
+import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import lombok.Getter;
@@ -27,9 +28,11 @@ public class MainView extends VerticalLayout {
     @Autowired
     private BackendClient backendClient;
 
-    Span content = new Span("Witaj w aplikacji ACTIVITY FINDER! \n Jest to narzędzie służące do wyszukiwania wszelkich aktywności, które \n" +
-                "pomogą skutecznie zorganizować wolny czas dla twojego dziecka. \n Znajdziesz tu propozycje zarówno wspólnych rodzinnych zabaw, jak i \n" +
-                "zajęć które dziecko może wykonywać samodzielnie.");
+    H4 header = new H4("ACTIVITY FINDER... wyszukiwarka zajęć i zabaw dla najmłodszych");
+
+    Span content = new Span("Witaj w aplikacji ACTIVITY FINDER! \nJest to narzędzie służące do wyszukiwania wszelkich aktywności, które \n" +
+                "pomogą skutecznie zorganizować wolny czas dla twojego dziecka. \nZnajdziesz tu propozycje zarówno wspólnych rodzinnych zabaw, jak i \n" +
+                "zajęć, które twoja pociecha może wykonywać samodzielnie.");
     NativeButton buttonInside = new NativeButton("Zamknij [x]");
     Notification notification = new Notification(content, buttonInside);
 
@@ -37,12 +40,19 @@ public class MainView extends VerticalLayout {
     Button infoBtn = new Button("INFO", event -> {
         getGrid().setItems(Stream.empty());
         notification.setOpened(true);
+        grid.setSelectionMode(Grid.SelectionMode.NONE);
+        getFavouriteBtn().setEnabled(false);
+        getLotteryBtn().setEnabled(false);
+        getAllBtn().setEnabled(false);
+        getPlanningBtn().setEnabled(false);
     });
     Button allBtn = new Button("WSZYSTKIE", event -> {
         getGrid().setItems(backendClient.getAllActivities());
+        grid.setSelectionMode(Grid.SelectionMode.MULTI);
     });
-    Button favouriteBtn = new Button("ULUBIONE");
+    Button favouriteBtn = new Button("WYBRANE");
     Button lotteryBtn = new Button("WYLOSUJ", event -> {
+        grid.setSelectionMode(Grid.SelectionMode.MULTI);
         getGrid().setItems(backendClient.getRandomActivity());
     });
     Button planningBtn = new Button("ZAPLANUJ");
@@ -70,9 +80,17 @@ public class MainView extends VerticalLayout {
     public MainView(BackendClient backendClient) {
         this.backendClient=backendClient;
 
+        add(header);
+
         chngFiltersBtn.setEnabled(false);
         notification.setDuration(30000);
-        buttonInside.addClickListener(event -> notification.close());
+        buttonInside.addClickListener(event -> {
+            notification.close();
+            getFavouriteBtn().setEnabled(true);
+            getLotteryBtn().setEnabled(true);
+            getAllBtn().setEnabled(true);
+            getPlanningBtn().setEnabled(true);
+        });
         notification.setPosition(Notification.Position.MIDDLE);
 
         howManyRadioBtn.setLabel("ILE OSÓB:");
@@ -185,10 +203,29 @@ public class MainView extends VerticalLayout {
         filterText.setValueChangeMode(ValueChangeMode.EAGER);
         filterText.addValueChangeListener(e -> updateList());
 
-        grid.setColumns("name", "description", "favourite");
+        grid.setColumns("name", "minTime", "maxTime");
         grid.getColumnByKey("name").setHeader("Nazwa");
-        grid.getColumnByKey("description").setHeader("Opis");
-        grid.getColumnByKey("favourite").setHeader("Ulubione");
+
+        grid.setSelectionMode(Grid.SelectionMode.MULTI);
+        grid.asMultiSelect().addValueChangeListener(event -> {
+            //dodanie do ulubionych Set?
+        });
+
+        grid.setItemDetailsRenderer(TemplateRenderer.<Activity>of(
+                        "<div class='custom-details' style='border: 1px solid gray; padding: 10px; width: 100%; box-sizing: border-box;'>"
+                                + "<div>[[item.description]]</div>"
+                                + "</div>")
+                .withProperty("description", Activity::getDescription)
+                .withEventHandler("handleClick", activity -> {
+                    grid.getDataProvider().refreshItem(activity);
+                }));
+
+        grid.setDetailsVisibleOnClick(false);
+        grid.addColumn(new NativeButtonRenderer("Opis", item -> grid.setDetailsVisible(item, !grid.isDetailsVisible(item))));
+
+
+        grid.getColumnByKey("minTime").setHeader("Czas min.");
+        grid.getColumnByKey("maxTime").setHeader("Czas max.");
 
         add(menuLt, grid);
 
