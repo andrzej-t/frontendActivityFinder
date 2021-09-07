@@ -2,7 +2,6 @@ package com.myapp.frontendactivityfinder.views;
 
 import com.myapp.frontendactivityfinder.client.BackendClient;
 import com.myapp.frontendactivityfinder.domain.Activity;
-import com.myapp.frontendactivityfinder.service.ActivityService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.NativeButton;
@@ -18,34 +17,36 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Route
 @Getter
-
 public class MainView extends VerticalLayout {
 
     @Autowired
     private BackendClient backendClient;
 
     Span content = new Span("Witaj w aplikacji ACTIVITY FINDER! \n Jest to narzędzie służące do wyszukiwania wszelkich aktywności, które \n" +
-                "pomogą skutecznie zorganizować wolny czas dla waszych pociech. \n Znajdziecie tu propozycje zarówno wspólnych rodzinnych zabaw, jak i \n" +
+                "pomogą skutecznie zorganizować wolny czas dla twojego dziecka. \n Znajdziesz tu propozycje zarówno wspólnych rodzinnych zabaw, jak i \n" +
                 "zajęć które dziecko może wykonywać samodzielnie.");
-    NativeButton buttonInside = new NativeButton("Zamknij tutaj");
+    NativeButton buttonInside = new NativeButton("Zamknij [x]");
     Notification notification = new Notification(content, buttonInside);
 
     Grid grid = new Grid(Activity.class);
-    Button infoBtn = new Button("INFO", event -> { notification.setOpened(true); });
+    Button infoBtn = new Button("INFO", event -> {
+        getGrid().setItems(Stream.empty());
+        notification.setOpened(true);
+    });
     Button allBtn = new Button("WSZYSTKIE", event -> {
         getGrid().setItems(backendClient.getAllActivities());
     });
     Button favouriteBtn = new Button("ULUBIONE");
-    Button lotteryBtn = new Button("WYLOSUJ");
+    Button lotteryBtn = new Button("WYLOSUJ", event -> {
+        getGrid().setItems(backendClient.getRandomActivity());
+    });
     Button planningBtn = new Button("ZAPLANUJ");
-    Button rmvFiltersBtn = new Button("ZMIEŃ FILTR", event -> {
+    Button chngFiltersBtn = new Button("ZMIEŃ FILTR", event -> {
         getGrid().setItems(Stream.empty());
         getWhereRadioBtn().setReadOnly(false);
         getWhereRadioBtn().setValue("");
@@ -55,6 +56,7 @@ public class MainView extends VerticalLayout {
         getSeasonRadioBtn().setValue("");
         getHowManyRadioBtn().setReadOnly(false);
         getHowManyRadioBtn().setValue("");
+        getChngFiltersBtn().setEnabled(false);
     });
     NumberField minutesField = new NumberField();
     RadioButtonGroup<String> howManyRadioBtn = new RadioButtonGroup<>();
@@ -63,11 +65,12 @@ public class MainView extends VerticalLayout {
     RadioButtonGroup<String> seasonRadioBtn = new RadioButtonGroup<>();
     TextField filterText = new TextField();
     HorizontalLayout menuLt = new HorizontalLayout(filterText, infoBtn, allBtn, favouriteBtn, lotteryBtn, planningBtn, minutesField);
-    HorizontalLayout bottomLt = new HorizontalLayout(whatKindRadioBtn, rmvFiltersBtn, howManyRadioBtn, whereRadioBtn, seasonRadioBtn, rmvFiltersBtn);
+    HorizontalLayout bottomLt = new HorizontalLayout(whatKindRadioBtn, chngFiltersBtn, howManyRadioBtn, whereRadioBtn, seasonRadioBtn, chngFiltersBtn);
 
     public MainView(BackendClient backendClient) {
         this.backendClient=backendClient;
 
+        chngFiltersBtn.setEnabled(false);
         notification.setDuration(30000);
         buttonInside.addClickListener(event -> notification.close());
         notification.setPosition(Notification.Position.MIDDLE);
@@ -82,18 +85,21 @@ public class MainView extends VerticalLayout {
                 whatKindRadioBtn.setReadOnly(true);
                 whereRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
+                chngFiltersBtn.setEnabled(true);
             }
             if (event.getValue().equals("2")) {
                 grid.setItems(backendClient.getTwoActivities());
                 whatKindRadioBtn.setReadOnly(true);
                 whereRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
+                chngFiltersBtn.setEnabled(true);
             }
             if (event.getValue().equals("Więcej")) {
                 grid.setItems(backendClient.getMoreActivities());
                 whatKindRadioBtn.setReadOnly(true);
                 whereRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
+                chngFiltersBtn.setEnabled(true);
             }
         });
 
@@ -107,24 +113,28 @@ public class MainView extends VerticalLayout {
                 howManyRadioBtn.setReadOnly(true);
                 whereRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
+                chngFiltersBtn.setEnabled(true);
             }
             if (event.getValue().equals("Edukacyjne")) {
                 grid.setItems(backendClient.getEducationalActivities());
                 howManyRadioBtn.setReadOnly(true);
                 whereRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
+                chngFiltersBtn.setEnabled(true);
             }
             if (event.getValue().equals("Ruchowe")) {
                 grid.setItems(backendClient.getMotionActivities());
                 howManyRadioBtn.setReadOnly(true);
                 whereRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
+                chngFiltersBtn.setEnabled(true);
             }
             if (event.getValue().equals("Do auta")) {
                 grid.setItems(backendClient.getInCarActivities());
                 howManyRadioBtn.setReadOnly(true);
                 whereRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
+                chngFiltersBtn.setEnabled(true);
             }
         });
 
@@ -138,12 +148,14 @@ public class MainView extends VerticalLayout {
                 whatKindRadioBtn.setReadOnly(true);
                 howManyRadioBtn.setReadOnly(true);
                 whereRadioBtn.setReadOnly(true);
+                chngFiltersBtn.setEnabled(true);
             }
             if (event.getValue().equals("Zima")) {
                 grid.setItems(backendClient.getWinterActivities());
                 whatKindRadioBtn.setReadOnly(true);
                 howManyRadioBtn.setReadOnly(true);
                 whereRadioBtn.setReadOnly(true);
+                chngFiltersBtn.setEnabled(true);
             }
         });
 
@@ -157,12 +169,14 @@ public class MainView extends VerticalLayout {
                 whatKindRadioBtn.setReadOnly(true);
                 howManyRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
+                chngFiltersBtn.setEnabled(true);
             }
             if (event.getValue().equals("Wewnątrz")) {
                 grid.setItems(backendClient.getIndoorActivities());
                 whatKindRadioBtn.setReadOnly(true);
                 howManyRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
+                chngFiltersBtn.setEnabled(true);
             }
         });
 
