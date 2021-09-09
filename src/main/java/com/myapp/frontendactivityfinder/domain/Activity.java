@@ -1,11 +1,14 @@
 package com.myapp.frontendactivityfinder.domain;
 
 import lombok.*;
+import org.springframework.stereotype.Component;
 
+@Component
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Activity {
     private Long id;
     private String name;

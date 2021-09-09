@@ -27,6 +27,29 @@ public class BackendClient {
         }
     }
 
+    public void createActivity(Activity activity) {
+        restTemplate.postForObject(connectionConfig.getBackApiEndpoint() + "/activity", activity, Activity.class);
+    }
+
+    public List<Activity> getFavouriteActivities() {
+        try {
+            Optional<Activity[]> boardsResponse = Optional.ofNullable(restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/favourite", Activity[].class));
+            return Arrays.asList(boardsResponse.orElse(new Activity[0]));
+        } catch (RestClientException e) {
+            LOGGER.error(e.getMessage(), e);
+            return new ArrayList<>();
+        }
+    }
+
+    public void  updateActivity(Activity activity) {
+        restTemplate.put(connectionConfig.getBackApiEndpoint() + "/activity", activity, Activity.class);
+    }
+
+//    public Activity getActivityById(String id) {
+//        Optional<Activity> boardsResponse = Optional.ofNullable(restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/activities" + id, Activity.class));
+//        return boardsResponse.orElse(new Activity());
+//    }
+
     public List<Activity> getRandomActivity() {
         try {
             Optional<Activity[]> boardsResponse = Optional.ofNullable(restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/random", Activity[].class));
@@ -167,13 +190,4 @@ public class BackendClient {
         }
     }
 
-    public List<Activity> getFavouriteActivities() {
-        try {
-            Optional<Activity[]> boardsResponse = Optional.ofNullable(restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/favourite", Activity[].class));
-            return Arrays.asList(boardsResponse.orElse(new Activity[0]));
-        } catch (RestClientException e) {
-            LOGGER.error(e.getMessage(), e);
-            return new ArrayList<>();
-        }
-    }
 }
