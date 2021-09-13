@@ -39,10 +39,10 @@ public class MainView extends VerticalLayout {
 
     ComboBox<String> labelComboBox = new ComboBox<>();
 
-    Grid grid = new Grid(Activity.class);
+    Grid<Activity> grid = new Grid(Activity.class);
 
     Button infoBtn = new Button("INFO", event -> {
-        getGrid().setItems(Stream.empty());
+        grid.setItems(Stream.empty());
         notification.setOpened(true);
         getFavouriteBtn().setEnabled(false);
         getLotteryBtn().setEnabled(false);
@@ -54,15 +54,15 @@ public class MainView extends VerticalLayout {
     });
 
     Button favouriteBtn = new Button("POPULARNE", event -> {
-        getGrid().setItems(backendClient.getFavouriteActivities());
+        grid.setItems(backendClient.getFavouriteActivities());
     });
 
     Button lotteryBtn = new Button("WYLOSUJ", event -> {
-        getGrid().setItems(backendClient.getRandomActivity());
+        grid.setItems(backendClient.getRandomActivity());
     });
 
     Button chngFiltersBtn = new Button("ZMIEŃ FILTR", event -> {
-        getGrid().setItems(Stream.empty());
+        grid.setItems(Stream.empty());
         getWhereRadioBtn().setReadOnly(false);
         getWhereRadioBtn().setValue("");
         getWhatKindRadioBtn().setReadOnly(false);
@@ -222,7 +222,7 @@ public class MainView extends VerticalLayout {
                 }));
 
         grid.setDetailsVisibleOnClick(false);
-        grid.addColumn(new NativeButtonRenderer("OPIS", item -> grid.setDetailsVisible(item, !grid.isDetailsVisible(item))));
+        grid.addColumn(new NativeButtonRenderer("OPIS", item -> grid.setDetailsVisible((Activity) item, !grid.isDetailsVisible((Activity) item))));
 
         labelComboBox.setItems("Kraków", "Tarnów", "Warszawa");
         labelComboBox.setLabel("Aktualna pogoda: ");

@@ -2,9 +2,11 @@ package com.myapp.frontendactivityfinder.client;
 
 import com.myapp.frontendactivityfinder.configuration.ConnectionConfig;
 import com.myapp.frontendactivityfinder.domain.Activity;
+import com.myapp.frontendactivityfinder.domain.Weather;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -16,6 +18,16 @@ public class BackendClient {
     private final RestTemplate restTemplate;
     private final ConnectionConfig connectionConfig;
     private static final Logger LOGGER = LoggerFactory.getLogger(BackendClient.class);
+
+//    public Weather readWeather(String stacja) {
+//            Optional<Weather> boardsResponse = Optional.ofNullable(restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/weather/get/" + stacja, Weather.class));
+//            return boardsResponse.orElse(new Weather());
+//    }
+
+//    public Weather readWeather() {
+//        return restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/weather/get/warszawa", Weather.class);
+//
+//    }
 
     public List<Activity> getAllActivities() {
         try {
