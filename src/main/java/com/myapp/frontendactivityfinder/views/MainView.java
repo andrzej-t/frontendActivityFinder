@@ -3,27 +3,23 @@ package com.myapp.frontendactivityfinder.views;
 import com.myapp.frontendactivityfinder.client.BackendClient;
 import com.myapp.frontendactivityfinder.domain.Activity;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.*;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
-import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.NativeButtonRenderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import javax.swing.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,10 +27,7 @@ import java.util.stream.Stream;
 @Getter
 public class MainView extends VerticalLayout {
 
-    @Autowired
     private BackendClient backendClient;
-    @Autowired
-    private Activity activity;
 
     H4 header = new H4("ACTIVITY FINDER... wyszukiwarka zajęć i zabaw dla najmłodszych");
 
@@ -44,6 +37,8 @@ public class MainView extends VerticalLayout {
     NativeButton buttonInside = new NativeButton("Zamknij [x]");
     Notification notification = new Notification(content, buttonInside);
 
+    ComboBox<String> labelComboBox = new ComboBox<>();
+
     Grid grid = new Grid(Activity.class);
 
     Button infoBtn = new Button("INFO", event -> {
@@ -52,22 +47,19 @@ public class MainView extends VerticalLayout {
         getFavouriteBtn().setEnabled(false);
         getLotteryBtn().setEnabled(false);
         getAllBtn().setEnabled(false);
-        getPlanningBtn().setEnabled(false);
     });
 
     Button allBtn = new Button("WSZYSTKIE", event -> {
         grid.setItems(backendClient.getAllActivities());
     });
 
-    Button favouriteBtn = new Button("ULUBIONE", event -> {
+    Button favouriteBtn = new Button("POPULARNE", event -> {
         getGrid().setItems(backendClient.getFavouriteActivities());
     });
 
     Button lotteryBtn = new Button("WYLOSUJ", event -> {
         getGrid().setItems(backendClient.getRandomActivity());
     });
-
-    Button planningBtn = new Button("ZAPLANUJ");
 
     Button chngFiltersBtn = new Button("ZMIEŃ FILTR", event -> {
         getGrid().setItems(Stream.empty());
@@ -81,44 +73,14 @@ public class MainView extends VerticalLayout {
         getHowManyRadioBtn().setValue("");
         getChngFiltersBtn().setEnabled(false);
     });
-    NumberField minutesField = new NumberField();
+
     RadioButtonGroup<String> howManyRadioBtn = new RadioButtonGroup<>();
     RadioButtonGroup<String> whatKindRadioBtn = new RadioButtonGroup<>();
     RadioButtonGroup<String> whereRadioBtn = new RadioButtonGroup<>();
     RadioButtonGroup<String> seasonRadioBtn = new RadioButtonGroup<>();
     TextField filterText = new TextField();
-    HorizontalLayout menuLt = new HorizontalLayout(filterText, infoBtn, allBtn, favouriteBtn, lotteryBtn, planningBtn, minutesField);
-    HorizontalLayout bottomLt = new HorizontalLayout(whatKindRadioBtn, chngFiltersBtn, howManyRadioBtn, whereRadioBtn, seasonRadioBtn, chngFiltersBtn);
-
-    private Button createFavBtn(Grid<Activity> grid, Activity item) {
-        Button buttonFav = new Button("+", clickEvent -> {
-
-            Activity activity2 = Activity.builder()
-                    .id(this.getActivity().getId())
-                    .name("nabura")
-                    .description("gddt")
-                    .minTime(33)
-                    .maxTime(37)
-                    .onePerson(true)
-                    .twoPeople(true)
-                    .morePeople(true)
-                    .outdoor(true)
-                    .indoor(true)
-                    .summer(true)
-                    .winter(true)
-                    .inCar(true)
-                    .educational(true)
-                    .art(true)
-                    .motion(true)
-                    .favourite(true)
-                    .build();
-
-            backendClient.updateActivity(activity2);
-//            backendClient.updateActivity(new Activity(118l, "g", "h", 10, 35, true, true, true, true, true, true, true, true, true, true, true, true ));
-        });
-
-        return buttonFav;
-    }
+    HorizontalLayout menuLt = new HorizontalLayout(filterText, infoBtn, allBtn, favouriteBtn, lotteryBtn);
+    HorizontalLayout bottomLt = new HorizontalLayout(whatKindRadioBtn, chngFiltersBtn, howManyRadioBtn, whereRadioBtn, seasonRadioBtn, chngFiltersBtn, labelComboBox);
 
     public MainView(BackendClient backendClient) {
         this.backendClient=backendClient;
@@ -132,7 +94,6 @@ public class MainView extends VerticalLayout {
             getFavouriteBtn().setEnabled(true);
             getLotteryBtn().setEnabled(true);
             getAllBtn().setEnabled(true);
-            getPlanningBtn().setEnabled(true);
         });
         notification.setPosition(Notification.Position.MIDDLE);
 
@@ -248,6 +209,8 @@ public class MainView extends VerticalLayout {
 
         grid.setColumns("name", "minTime", "maxTime");
         grid.getColumnByKey("name").setHeader("NAZWA");
+        grid.getColumnByKey("minTime").setHeader("CZAS MIN.");
+        grid.getColumnByKey("maxTime").setHeader("CZAS MAX.");
 
         grid.setItemDetailsRenderer(TemplateRenderer.<Activity>of(
                         "<div class='custom-details' style='border: 1px solid gray; padding: 10px; width: 100%; box-sizing: border-box;'>"
@@ -261,11 +224,8 @@ public class MainView extends VerticalLayout {
         grid.setDetailsVisibleOnClick(false);
         grid.addColumn(new NativeButtonRenderer("OPIS", item -> grid.setDetailsVisible(item, !grid.isDetailsVisible(item))));
 
-        grid.getColumnByKey("minTime").setHeader("CZAS MIN.");
-        grid.getColumnByKey("maxTime").setHeader("CZAS MAX.");
-
-        grid.addComponentColumn(o -> createFavBtn(grid, activity))
-                .setHeader("ULUBIONE");
+        labelComboBox.setItems("Kraków", "Tarnów", "Warszawa");
+        labelComboBox.setLabel("Aktualna pogoda: ");
 
         add(menuLt, grid);
 
