@@ -6,7 +6,6 @@ import com.myapp.frontendactivityfinder.domain.Weather;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -19,15 +18,10 @@ public class BackendClient {
     private final ConnectionConfig connectionConfig;
     private static final Logger LOGGER = LoggerFactory.getLogger(BackendClient.class);
 
-//    public Weather readWeather(String stacja) {
-//            Optional<Weather> boardsResponse = Optional.ofNullable(restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/weather/get/" + stacja, Weather.class));
-//            return boardsResponse.orElse(new Weather());
-//    }
-
-//    public Weather readWeather() {
-//        return restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/weather/get/warszawa", Weather.class);
-//
-//    }
+    public Weather readWeather(String stacja) {
+            Optional<Weather> boardsResponse = Optional.ofNullable(restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/weather/get/" + stacja, Weather.class));
+            return boardsResponse.orElse(new Weather());
+    }
 
     public List<Activity> getAllActivities() {
         try {
@@ -39,9 +33,9 @@ public class BackendClient {
         }
     }
 
-    public void createActivity(Activity activity) {
-        restTemplate.postForObject(connectionConfig.getBackApiEndpoint() + "/activity", activity, Activity.class);
-    }
+//    public void createActivity(Activity activity) {
+//        restTemplate.postForObject(connectionConfig.getBackApiEndpoint() + "/activity", activity, Activity.class);
+//    }
 
     public List<Activity> getFavouriteActivities() {
         try {
@@ -82,15 +76,15 @@ public class BackendClient {
         }
     }
 
-    public List<Activity> getDescriptionActivities() {
-        try {
-            Optional<Activity[]> boardsResponse = Optional.ofNullable(restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/description", Activity[].class));
-            return Arrays.asList(boardsResponse.orElse(new Activity[0]));
-        } catch (RestClientException e) {
-            LOGGER.error(e.getMessage(), e);
-            return new ArrayList<>();
-        }
-    }
+//    public List<Activity> getDescriptionActivities() {
+//        try {
+//            Optional<Activity[]> boardsResponse = Optional.ofNullable(restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/description", Activity[].class));
+//            return Arrays.asList(boardsResponse.orElse(new Activity[0]));
+//        } catch (RestClientException e) {
+//            LOGGER.error(e.getMessage(), e);
+//            return new ArrayList<>();
+//        }
+//    }
 
     public List<Activity> getOneActivities() {
         try {
@@ -201,5 +195,4 @@ public class BackendClient {
             return new ArrayList<>();
         }
     }
-
 }
