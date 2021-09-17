@@ -30,7 +30,7 @@ public class MainView extends VerticalLayout {
 
     Grid<Activity> grid = new Grid(Activity.class);
 
-    H4 header = new H4("ACTIVITY FINDER... wyszukiwarka zajęć i zabaw dla najmłodszych i nie tylko...");
+    H4 header = new H4("ACTIVITY FINDER... wyszukiwarka zajęć i zabaw dla najmłodszych i nie tylko");
 
     Span content = new Span("Witaj w aplikacji ACTIVITY FINDER! \nJest to narzędzie służące do wyszukiwania wszelkich aktywności, które \n" +
             "pomogą skutecznie zorganizować wolny czas dla twojego dziecka. \nZnajdziesz tu propozycje zarówno wspólnych rodzinnych zabaw, jak i \n" +
@@ -47,35 +47,88 @@ public class MainView extends VerticalLayout {
     NativeButton buttonInside2 = new NativeButton("Close [x]");
     Span content2 = new Span();
     Notification notification2 = new Notification(content2, buttonInside2);
-    Button nameDayBtn = new Button("ACTIVITY IN ENGLISH", event -> {
+    Button boredBtn = new Button("ACTIVITY IN ENGLISH", event -> {
         content2.setText(backendClient.readBored().getActivity());
         grid.setItems(Stream.empty());
         notification2.setOpened(true);
-        getFavouriteBtn().setEnabled(false);
-        getLotteryBtn().setEnabled(false);
+        getFilterText().setEnabled(false);
+        getInfoBtn().setEnabled(false);
         getAllBtn().setEnabled(false);
+        getPopularBtn().setEnabled(false);
+        getLotteryBtn().setEnabled(false);
+        getGrid().setEnabled(false);
+        getWhatKindRadioBtn().setReadOnly(true);
+        getWhatKindRadioBtn().setValue("");
+        getHowManyRadioBtn().setReadOnly(true);
+        getHowManyRadioBtn().setValue("");
+        getWhereRadioBtn().setReadOnly(true);
+        getWhereRadioBtn().setValue("");
+        getSeasonRadioBtn().setReadOnly(true);
+        getSeasonRadioBtn().setValue("");
+        getChngFiltersBtn().setEnabled(false);
+        getBoredBtn().setEnabled(false);
         getLabelSelect().setEnabled(false);
     });
 
     Button infoBtn = new Button("INFO", event -> {
         grid.setItems(Stream.empty());
         notification.setOpened(true);
-        getFavouriteBtn().setEnabled(false);
-        getLotteryBtn().setEnabled(false);
+        getFilterText().setEnabled(false);
+        getInfoBtn().setEnabled(false);
         getAllBtn().setEnabled(false);
+        getPopularBtn().setEnabled(false);
+        getLotteryBtn().setEnabled(false);
+        getGrid().setEnabled(false);
+        getWhatKindRadioBtn().setReadOnly(true);
+        getWhatKindRadioBtn().setValue("");
+        getHowManyRadioBtn().setReadOnly(true);
+        getHowManyRadioBtn().setValue("");
+        getWhereRadioBtn().setReadOnly(true);
+        getWhereRadioBtn().setValue("");
+        getSeasonRadioBtn().setReadOnly(true);
+        getSeasonRadioBtn().setValue("");
+        getChngFiltersBtn().setEnabled(false);
+        getBoredBtn().setEnabled(false);
         getLabelSelect().setEnabled(false);
     });
 
     Button allBtn = new Button("WSZYSTKIE", event -> {
         grid.setItems(backendClient.getAllActivities());
+        getWhatKindRadioBtn().setReadOnly(false);
+        getWhatKindRadioBtn().setValue("");
+        getHowManyRadioBtn().setReadOnly(false);
+        getHowManyRadioBtn().setValue("");
+        getWhereRadioBtn().setReadOnly(false);
+        getWhereRadioBtn().setValue("");
+        getSeasonRadioBtn().setReadOnly(false);
+        getSeasonRadioBtn().setValue("");
+        getChngFiltersBtn().setEnabled(false);
     });
 
-    Button favouriteBtn = new Button("POPULARNE", event -> {
+    Button popularBtn = new Button("POPULARNE", event -> {
         grid.setItems(backendClient.getFavouriteActivities());
+        getWhatKindRadioBtn().setReadOnly(false);
+        getWhatKindRadioBtn().setValue("");
+        getHowManyRadioBtn().setReadOnly(false);
+        getHowManyRadioBtn().setValue("");
+        getWhereRadioBtn().setReadOnly(false);
+        getWhereRadioBtn().setValue("");
+        getSeasonRadioBtn().setReadOnly(false);
+        getSeasonRadioBtn().setValue("");
+        getChngFiltersBtn().setEnabled(false);
     });
 
     Button lotteryBtn = new Button("WYLOSUJ", event -> {
         grid.setItems(backendClient.getRandomActivity());
+        getWhatKindRadioBtn().setReadOnly(false);
+        getWhatKindRadioBtn().setValue("");
+        getHowManyRadioBtn().setReadOnly(false);
+        getHowManyRadioBtn().setValue("");
+        getWhereRadioBtn().setReadOnly(false);
+        getWhereRadioBtn().setValue("");
+        getSeasonRadioBtn().setReadOnly(false);
+        getSeasonRadioBtn().setValue("");
+        getChngFiltersBtn().setEnabled(false);
     });
 
     Button chngFiltersBtn = new Button("ZMIEŃ FILTR", event -> {
@@ -97,8 +150,8 @@ public class MainView extends VerticalLayout {
     RadioButtonGroup<String> seasonRadioBtn = new RadioButtonGroup<>();
     TextField filterText = new TextField();
 
-    HorizontalLayout menuLt = new HorizontalLayout(filterText, infoBtn, allBtn, favouriteBtn, lotteryBtn);
-    HorizontalLayout bottomLt = new HorizontalLayout(whatKindRadioBtn, chngFiltersBtn, howManyRadioBtn, whereRadioBtn, seasonRadioBtn, chngFiltersBtn, nameDayBtn, labelSelect);
+    HorizontalLayout menuLt = new HorizontalLayout(filterText, infoBtn, allBtn, popularBtn, lotteryBtn);
+    HorizontalLayout bottomLt = new HorizontalLayout(whatKindRadioBtn, chngFiltersBtn, howManyRadioBtn, whereRadioBtn, seasonRadioBtn, chngFiltersBtn, boredBtn, labelSelect);
 
     public MainView(BackendClient backendClient) {
         this.backendClient=backendClient;
@@ -110,30 +163,66 @@ public class MainView extends VerticalLayout {
         notification.setPosition(Notification.Position.MIDDLE);
         buttonInside.addClickListener(event -> {
             notification.close();
-            getFavouriteBtn().setEnabled(true);
-            getLotteryBtn().setEnabled(true);
+            getFilterText().setEnabled(true);
+            getInfoBtn().setEnabled(true);
             getAllBtn().setEnabled(true);
+            getPopularBtn().setEnabled(true);
+            getLotteryBtn().setEnabled(true);
+            getGrid().setEnabled(true);
+            getWhatKindRadioBtn().setReadOnly(false);
+            getWhatKindRadioBtn().setValue("");
+            getHowManyRadioBtn().setReadOnly(false);
+            getHowManyRadioBtn().setValue("");
+            getWhereRadioBtn().setReadOnly(false);
+            getWhereRadioBtn().setValue("");
+            getSeasonRadioBtn().setReadOnly(false);
+            getSeasonRadioBtn().setValue("");
+            getChngFiltersBtn().setEnabled(false);
+            getBoredBtn().setEnabled(true);
             getLabelSelect().setEnabled(true);
         });
 
         notification1.setPosition(Notification.Position.MIDDLE);
         buttonInside1.addClickListener(event -> {
             UI.getCurrent().getPage().reload();
-            getFavouriteBtn().setEnabled(true);
-            getLotteryBtn().setEnabled(true);
-            getAllBtn().setEnabled(true);
+            getFilterText().setEnabled(true);
             getInfoBtn().setEnabled(true);
-            labelSelect.setEnabled(true);
+            getAllBtn().setEnabled(true);
+            getPopularBtn().setEnabled(true);
+            getLotteryBtn().setEnabled(true);
+            getWhatKindRadioBtn().setReadOnly(false);
+            getWhatKindRadioBtn().setValue("");
+            getHowManyRadioBtn().setReadOnly(false);
+            getHowManyRadioBtn().setValue("");
+            getWhereRadioBtn().setReadOnly(false);
+            getWhereRadioBtn().setValue("");
+            getSeasonRadioBtn().setReadOnly(false);
+            getSeasonRadioBtn().setValue("");
+            getChngFiltersBtn().setEnabled(false);
+            getBoredBtn().setEnabled(true);
+            getLabelSelect().setEnabled(true);
             notification1.close();
         });
 
         notification2.setPosition(Notification.Position.MIDDLE);
         buttonInside2.addClickListener(event -> {
-            getFavouriteBtn().setEnabled(true);
-            getLotteryBtn().setEnabled(true);
-            getAllBtn().setEnabled(true);
+            getFilterText().setEnabled(true);
             getInfoBtn().setEnabled(true);
-            labelSelect.setEnabled(true);
+            getAllBtn().setEnabled(true);
+            getPopularBtn().setEnabled(true);
+            getLotteryBtn().setEnabled(true);
+            getGrid().setEnabled(true);
+            getWhatKindRadioBtn().setReadOnly(false);
+            getWhatKindRadioBtn().setValue("");
+            getHowManyRadioBtn().setReadOnly(false);
+            getHowManyRadioBtn().setValue("");
+            getWhereRadioBtn().setReadOnly(false);
+            getWhereRadioBtn().setValue("");
+            getSeasonRadioBtn().setReadOnly(false);
+            getSeasonRadioBtn().setValue("");
+            getChngFiltersBtn().setEnabled(false);
+            getBoredBtn().setEnabled(true);
+            getLabelSelect().setEnabled(true);
             notification2.close();
         });
 
@@ -142,6 +231,7 @@ public class MainView extends VerticalLayout {
         howManyRadioBtn.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
         howManyRadioBtn.setReadOnly(false);
         howManyRadioBtn.addValueChangeListener(event -> {
+
             if (event.getValue().equals("1")) {
                 grid.setItems(backendClient.getOneActivities());
                 whatKindRadioBtn.setReadOnly(true);
@@ -170,6 +260,7 @@ public class MainView extends VerticalLayout {
         whatKindRadioBtn.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
         whatKindRadioBtn.setReadOnly(false);
         whatKindRadioBtn.addValueChangeListener(event -> {
+
             if (event.getValue().equals("Artystyczne")) {
                 grid.setItems(backendClient.getArtActivities());
                 howManyRadioBtn.setReadOnly(true);
@@ -205,6 +296,7 @@ public class MainView extends VerticalLayout {
         seasonRadioBtn.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
         seasonRadioBtn.setReadOnly(false);
         seasonRadioBtn.addValueChangeListener(event -> {
+
             if (event.getValue().equals("Lato")) {
                 grid.setItems(backendClient.getSummerActivities());
                 whatKindRadioBtn.setReadOnly(true);
@@ -245,7 +337,18 @@ public class MainView extends VerticalLayout {
         filterText.setPlaceholder("Wyszukaj po nazwie...");
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.EAGER);
-        filterText.addValueChangeListener(e -> updateList());
+        filterText.addValueChangeListener(e -> {
+            updateList();
+            getWhatKindRadioBtn().setReadOnly(false);
+            getWhatKindRadioBtn().setValue("");
+            getHowManyRadioBtn().setReadOnly(false);
+            getHowManyRadioBtn().setValue("");
+            getWhereRadioBtn().setReadOnly(false);
+            getWhereRadioBtn().setValue("");
+            getSeasonRadioBtn().setReadOnly(false);
+            getSeasonRadioBtn().setValue("");
+            getChngFiltersBtn().setEnabled(false);
+        });
 
         grid.setColumns("name", "minTime", "maxTime");
         grid.getColumnByKey("name").setHeader("NAZWA");
@@ -266,17 +369,29 @@ public class MainView extends VerticalLayout {
 
         labelSelect.setItems("Białystok", "Bielsko Biała", "Chojnice", "Częstochowa", "Elbląg", "Gdańsk", "Gorzów", "Hel", "Jelenia Góra", "Kalisz", "Kasprowy Wierch", "Katowice", "Kętrzyn", "Kielce", "Kłodzko", "Koło", "Kołobrzeg", "Koszalin", "Kozienice", "Kraków", "Krosno", "Legnica", "Lesko", "Leszno", "Lębork", "Lublin", "Łeba", "Łódź",
                 "Mikołajki", "Mława", "Nowy Sącz", "Olsztyn", "Opole", "Ostrołęka", "Piła", "Płock", "Poznań", "Przemyśl", "Racibórz", "Resko", "Rzeszów", "Sandomierz", "Siedlce", "Słubice", "Sulejów", "Suwałki", "Szczecin", "Szczecinek", "Śnieżka", "Świnoujście", "Tarnów", "Terespol", "Toruń", "Ustka", "Warszawa", "Wieluń", "Włodawa", "Wrocław", "Zakopane", "Zamość", "Zielona Góra");
-        labelSelect.setLabel("Aktualna pogoda: ");
+        labelSelect.setLabel("AKTUALNA POGODA: ");
         labelSelect.addValueChangeListener(event -> {
+            grid.setItems(Stream.empty());
             notification1.open();
             notification1.setPosition(Notification.Position.MIDDLE);
             content1.setText(backendClient.readWeather(event.getValue().replace('ą', 'a').replace('ć', 'c').replace('ę', 'e')
                     .replace('ł', 'l').replace('ń', 'n').replace('ó', 'o').replace('ś', 's').replace('ż', 'z').replaceAll("\\s+","").toLowerCase(Locale.ROOT)).toString());
-            getFavouriteBtn().setEnabled(false);
-            getLotteryBtn().setEnabled(false);
-            getAllBtn().setEnabled(false);
+            getFilterText().setEnabled(false);
             getInfoBtn().setEnabled(false);
-            labelSelect.setEnabled(false);
+            getAllBtn().setEnabled(false);
+            getPopularBtn().setEnabled(false);
+            getLotteryBtn().setEnabled(false);
+            getWhatKindRadioBtn().setReadOnly(true);
+            getWhatKindRadioBtn().setValue("");
+            getHowManyRadioBtn().setReadOnly(true);
+            getHowManyRadioBtn().setValue("");
+            getWhereRadioBtn().setReadOnly(true);
+            getWhereRadioBtn().setValue("");
+            getSeasonRadioBtn().setReadOnly(true);
+            getSeasonRadioBtn().setValue("");
+            getChngFiltersBtn().setEnabled(false);
+            getBoredBtn().setEnabled(false);
+            getLabelSelect().setEnabled(false);
         });
 
         add(menuLt, grid);
