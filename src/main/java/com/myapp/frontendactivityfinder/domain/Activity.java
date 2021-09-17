@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class Activity {
     private Long id;
     private String name;

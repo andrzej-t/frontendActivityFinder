@@ -2,8 +2,8 @@ package com.myapp.frontendactivityfinder.views;
 
 import com.myapp.frontendactivityfinder.client.BackendClient;
 import com.myapp.frontendactivityfinder.domain.Activity;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.notification.Notification;
@@ -11,6 +11,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.NativeButtonRenderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
@@ -25,23 +26,36 @@ import java.util.stream.Stream;
 @Getter
 public class MainView extends VerticalLayout {
 
-    private BackendClient backendClient;
+    BackendClient backendClient;
 
-    H4 header = new H4("ACTIVITY FINDER... wyszukiwarka zajęć i zabaw dla najmłodszych");
+    Grid<Activity> grid = new Grid(Activity.class);
+
+    H4 header = new H4("ACTIVITY FINDER... wyszukiwarka zajęć i zabaw dla najmłodszych i nie tylko...");
 
     Span content = new Span("Witaj w aplikacji ACTIVITY FINDER! \nJest to narzędzie służące do wyszukiwania wszelkich aktywności, które \n" +
             "pomogą skutecznie zorganizować wolny czas dla twojego dziecka. \nZnajdziesz tu propozycje zarówno wspólnych rodzinnych zabaw, jak i \n" +
-            "zajęć, które twoja pociecha może wykonywać samodzielnie.");
-
+            "zajęć, które twoja pociecha może wykonywać samodzielnie. W zakładce \"ACTIVITY IN ENGLISH\" możesz również odnaleźć losowo wybrane propozycje zajęć dla dorosłych");
     NativeButton buttonInside = new NativeButton("Zamknij [x]");
-
     Notification notification = new Notification(content, buttonInside);
 
-    Notification weatherNotif = new Notification();
+    NativeButton buttonInside1 = new NativeButton("Zamknij [x]");
+    Span content1 = new Span();
+    Notification notification1 = new Notification(content1, buttonInside1);
 
-    ComboBox<String> labelComboBox = new ComboBox<>();
+    Select<String> labelSelect = new Select<>();
 
-    Grid<Activity> grid = new Grid(Activity.class);
+    NativeButton buttonInside2 = new NativeButton("Close [x]");
+    Span content2 = new Span();
+    Notification notification2 = new Notification(content2, buttonInside2);
+    Button nameDayBtn = new Button("ACTIVITY IN ENGLISH", event -> {
+        content2.setText(backendClient.readBored().getActivity());
+        grid.setItems(Stream.empty());
+        notification2.setOpened(true);
+        getFavouriteBtn().setEnabled(false);
+        getLotteryBtn().setEnabled(false);
+        getAllBtn().setEnabled(false);
+        getLabelSelect().setEnabled(false);
+    });
 
     Button infoBtn = new Button("INFO", event -> {
         grid.setItems(Stream.empty());
@@ -49,6 +63,7 @@ public class MainView extends VerticalLayout {
         getFavouriteBtn().setEnabled(false);
         getLotteryBtn().setEnabled(false);
         getAllBtn().setEnabled(false);
+        getLabelSelect().setEnabled(false);
     });
 
     Button allBtn = new Button("WSZYSTKIE", event -> {
@@ -81,8 +96,9 @@ public class MainView extends VerticalLayout {
     RadioButtonGroup<String> whereRadioBtn = new RadioButtonGroup<>();
     RadioButtonGroup<String> seasonRadioBtn = new RadioButtonGroup<>();
     TextField filterText = new TextField();
+
     HorizontalLayout menuLt = new HorizontalLayout(filterText, infoBtn, allBtn, favouriteBtn, lotteryBtn);
-    HorizontalLayout bottomLt = new HorizontalLayout(whatKindRadioBtn, chngFiltersBtn, howManyRadioBtn, whereRadioBtn, seasonRadioBtn, chngFiltersBtn, labelComboBox);
+    HorizontalLayout bottomLt = new HorizontalLayout(whatKindRadioBtn, chngFiltersBtn, howManyRadioBtn, whereRadioBtn, seasonRadioBtn, chngFiltersBtn, nameDayBtn, labelSelect);
 
     public MainView(BackendClient backendClient) {
         this.backendClient=backendClient;
@@ -90,14 +106,36 @@ public class MainView extends VerticalLayout {
         add(header);
 
         chngFiltersBtn.setEnabled(false);
-        notification.setDuration(30000);
+
+        notification.setPosition(Notification.Position.MIDDLE);
         buttonInside.addClickListener(event -> {
             notification.close();
             getFavouriteBtn().setEnabled(true);
             getLotteryBtn().setEnabled(true);
             getAllBtn().setEnabled(true);
+            getLabelSelect().setEnabled(true);
         });
-        notification.setPosition(Notification.Position.MIDDLE);
+
+        notification1.setPosition(Notification.Position.MIDDLE);
+        buttonInside1.addClickListener(event -> {
+            UI.getCurrent().getPage().reload();
+            getFavouriteBtn().setEnabled(true);
+            getLotteryBtn().setEnabled(true);
+            getAllBtn().setEnabled(true);
+            getInfoBtn().setEnabled(true);
+            labelSelect.setEnabled(true);
+            notification1.close();
+        });
+
+        notification2.setPosition(Notification.Position.MIDDLE);
+        buttonInside2.addClickListener(event -> {
+            getFavouriteBtn().setEnabled(true);
+            getLotteryBtn().setEnabled(true);
+            getAllBtn().setEnabled(true);
+            getInfoBtn().setEnabled(true);
+            labelSelect.setEnabled(true);
+            notification2.close();
+        });
 
         howManyRadioBtn.setLabel("ILE OSÓB:");
         howManyRadioBtn.setItems("1", "2", "Więcej");
@@ -226,15 +264,19 @@ public class MainView extends VerticalLayout {
         grid.setDetailsVisibleOnClick(false);
         grid.addColumn(new NativeButtonRenderer("OPIS", item -> grid.setDetailsVisible((Activity) item, !grid.isDetailsVisible((Activity) item))));
 
-        labelComboBox.setItems("Białystok", "Bielsko Biała", "Chojnice", "Częstochowa", "Elbląg", "Gdańsk", "Gorzów", "Hel", "Jelenia Góra", "Kalisz", "Kasprowy Wierch", "Katowice", "Kętrzyn", "Kielce", "Kłodzko", "Koło", "Kołobrzeg", "Koszalin", "Kozienice", "Kraków", "Krosno", "Legnica", "Lesko", "Leszno", "Lębork", "Lublin", "Łeba", "Łódź",
+        labelSelect.setItems("Białystok", "Bielsko Biała", "Chojnice", "Częstochowa", "Elbląg", "Gdańsk", "Gorzów", "Hel", "Jelenia Góra", "Kalisz", "Kasprowy Wierch", "Katowice", "Kętrzyn", "Kielce", "Kłodzko", "Koło", "Kołobrzeg", "Koszalin", "Kozienice", "Kraków", "Krosno", "Legnica", "Lesko", "Leszno", "Lębork", "Lublin", "Łeba", "Łódź",
                 "Mikołajki", "Mława", "Nowy Sącz", "Olsztyn", "Opole", "Ostrołęka", "Piła", "Płock", "Poznań", "Przemyśl", "Racibórz", "Resko", "Rzeszów", "Sandomierz", "Siedlce", "Słubice", "Sulejów", "Suwałki", "Szczecin", "Szczecinek", "Śnieżka", "Świnoujście", "Tarnów", "Terespol", "Toruń", "Ustka", "Warszawa", "Wieluń", "Włodawa", "Wrocław", "Zakopane", "Zamość", "Zielona Góra");
-        labelComboBox.setLabel("Aktualna pogoda: ");
-        labelComboBox.addValueChangeListener(event -> {
-            weatherNotif.open();
-            weatherNotif.setPosition(Notification.Position.MIDDLE);
-            weatherNotif.setText(backendClient.readWeather(event.getValue().replace('ą', 'a').replace('ć', 'c').replace('ę', 'e')
+        labelSelect.setLabel("Aktualna pogoda: ");
+        labelSelect.addValueChangeListener(event -> {
+            notification1.open();
+            notification1.setPosition(Notification.Position.MIDDLE);
+            content1.setText(backendClient.readWeather(event.getValue().replace('ą', 'a').replace('ć', 'c').replace('ę', 'e')
                     .replace('ł', 'l').replace('ń', 'n').replace('ó', 'o').replace('ś', 's').replace('ż', 'z').replaceAll("\\s+","").toLowerCase(Locale.ROOT)).toString());
-            weatherNotif.setDuration(3000);
+            getFavouriteBtn().setEnabled(false);
+            getLotteryBtn().setEnabled(false);
+            getAllBtn().setEnabled(false);
+            getInfoBtn().setEnabled(false);
+            labelSelect.setEnabled(false);
         });
 
         add(menuLt, grid);
