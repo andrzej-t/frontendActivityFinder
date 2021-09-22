@@ -6,6 +6,8 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -28,9 +30,13 @@ public class MainView extends VerticalLayout {
 
     BackendClient backendClient;
 
+    Integer clickCounter;
+
+    Button thumbsUpButton = new Button(new Icon(VaadinIcon.THUMBS_UP));
+
     Grid<Activity> grid = new Grid(Activity.class);
 
-    H4 header = new H4("ACTIVITY FINDER... wyszukiwarka zajęć i zabaw dla najmłodszych i nie tylko");
+    H4 header = new H4("ACTIVITY FINDER wyszukiwarka zajęć i zabaw dla najmłodszych i nie tylko");
 
     Span content = new Span("Witaj w aplikacji ACTIVITY FINDER! \nJest to narzędzie służące do wyszukiwania wszelkich aktywności, które \n" +
             "pomogą skutecznie zorganizować wolny czas dla twojego dziecka. \nZnajdziesz tu propozycje zarówno wspólnych rodzinnych zabaw, jak i \n" +
@@ -42,7 +48,7 @@ public class MainView extends VerticalLayout {
     Span content1 = new Span();
     Notification notification1 = new Notification(content1, buttonInside1);
 
-    Select<String> labelSelect = new Select<>();
+    Select<String> placeholderSelect = new Select<>();
 
     NativeButton buttonInside2 = new NativeButton("Close [x]");
     Span content2 = new Span();
@@ -54,7 +60,7 @@ public class MainView extends VerticalLayout {
         getFilterText().setEnabled(false);
         getInfoBtn().setEnabled(false);
         getAllBtn().setEnabled(false);
-        getPopularBtn().setEnabled(false);
+        getNewestBtn().setEnabled(false);
         getLotteryBtn().setEnabled(false);
         getGrid().setEnabled(false);
         getWhatKindRadioBtn().setReadOnly(true);
@@ -67,7 +73,7 @@ public class MainView extends VerticalLayout {
         getSeasonRadioBtn().setValue("");
         getChngFiltersBtn().setEnabled(false);
         getBoredBtn().setEnabled(false);
-        getLabelSelect().setEnabled(false);
+        getPlaceholderSelect().setEnabled(false);
     });
 
     Button infoBtn = new Button("INFO", event -> {
@@ -76,7 +82,7 @@ public class MainView extends VerticalLayout {
         getFilterText().setEnabled(false);
         getInfoBtn().setEnabled(false);
         getAllBtn().setEnabled(false);
-        getPopularBtn().setEnabled(false);
+        getNewestBtn().setEnabled(false);
         getLotteryBtn().setEnabled(false);
         getGrid().setEnabled(false);
         getWhatKindRadioBtn().setReadOnly(true);
@@ -89,7 +95,7 @@ public class MainView extends VerticalLayout {
         getSeasonRadioBtn().setValue("");
         getChngFiltersBtn().setEnabled(false);
         getBoredBtn().setEnabled(false);
-        getLabelSelect().setEnabled(false);
+        getPlaceholderSelect().setEnabled(false);
     });
 
     Button allBtn = new Button("WSZYSTKIE", event -> {
@@ -105,8 +111,8 @@ public class MainView extends VerticalLayout {
         getChngFiltersBtn().setEnabled(false);
     });
 
-    Button popularBtn = new Button("POPULARNE", event -> {
-        grid.setItems(backendClient.getFavouriteActivities());
+    Button newestBtn = new Button("NAJNOWSZE", event -> {
+        grid.setItems(backendClient.getNewestActivities());
         getWhatKindRadioBtn().setReadOnly(false);
         getWhatKindRadioBtn().setValue("");
         getHowManyRadioBtn().setReadOnly(false);
@@ -150,11 +156,18 @@ public class MainView extends VerticalLayout {
     RadioButtonGroup<String> seasonRadioBtn = new RadioButtonGroup<>();
     TextField filterText = new TextField();
 
-    HorizontalLayout menuLt = new HorizontalLayout(filterText, infoBtn, allBtn, popularBtn, lotteryBtn);
-    HorizontalLayout bottomLt = new HorizontalLayout(whatKindRadioBtn, chngFiltersBtn, howManyRadioBtn, whereRadioBtn, seasonRadioBtn, chngFiltersBtn, boredBtn, labelSelect);
+    HorizontalLayout menuLt = new HorizontalLayout(filterText, infoBtn, allBtn, newestBtn, lotteryBtn);
+    HorizontalLayout bottomLt = new HorizontalLayout(whatKindRadioBtn, chngFiltersBtn, howManyRadioBtn, whereRadioBtn, seasonRadioBtn, chngFiltersBtn, boredBtn, placeholderSelect, thumbsUpButton);
 
     public MainView(BackendClient backendClient) {
         this.backendClient=backendClient;
+
+        thumbsUpButton.addClickListener(event -> {
+            clickCounter = 0;
+            if (thumbsUpButton.isDisableOnClick()) {
+                clickCounter++;
+            }
+        });
 
         add(header);
 
@@ -166,7 +179,7 @@ public class MainView extends VerticalLayout {
             getFilterText().setEnabled(true);
             getInfoBtn().setEnabled(true);
             getAllBtn().setEnabled(true);
-            getPopularBtn().setEnabled(true);
+            getNewestBtn().setEnabled(true);
             getLotteryBtn().setEnabled(true);
             getGrid().setEnabled(true);
             getWhatKindRadioBtn().setReadOnly(false);
@@ -179,7 +192,7 @@ public class MainView extends VerticalLayout {
             getSeasonRadioBtn().setValue("");
             getChngFiltersBtn().setEnabled(false);
             getBoredBtn().setEnabled(true);
-            getLabelSelect().setEnabled(true);
+            getPlaceholderSelect().setEnabled(true);
         });
 
         notification1.setPosition(Notification.Position.MIDDLE);
@@ -188,7 +201,7 @@ public class MainView extends VerticalLayout {
             getFilterText().setEnabled(true);
             getInfoBtn().setEnabled(true);
             getAllBtn().setEnabled(true);
-            getPopularBtn().setEnabled(true);
+            getNewestBtn().setEnabled(true);
             getLotteryBtn().setEnabled(true);
             getWhatKindRadioBtn().setReadOnly(false);
             getWhatKindRadioBtn().setValue("");
@@ -200,7 +213,7 @@ public class MainView extends VerticalLayout {
             getSeasonRadioBtn().setValue("");
             getChngFiltersBtn().setEnabled(false);
             getBoredBtn().setEnabled(true);
-            getLabelSelect().setEnabled(true);
+            getPlaceholderSelect().setEnabled(true);
             notification1.close();
         });
 
@@ -209,7 +222,7 @@ public class MainView extends VerticalLayout {
             getFilterText().setEnabled(true);
             getInfoBtn().setEnabled(true);
             getAllBtn().setEnabled(true);
-            getPopularBtn().setEnabled(true);
+            getNewestBtn().setEnabled(true);
             getLotteryBtn().setEnabled(true);
             getGrid().setEnabled(true);
             getWhatKindRadioBtn().setReadOnly(false);
@@ -222,7 +235,7 @@ public class MainView extends VerticalLayout {
             getSeasonRadioBtn().setValue("");
             getChngFiltersBtn().setEnabled(false);
             getBoredBtn().setEnabled(true);
-            getLabelSelect().setEnabled(true);
+            getPlaceholderSelect().setEnabled(true);
             notification2.close();
         });
 
@@ -367,10 +380,11 @@ public class MainView extends VerticalLayout {
         grid.setDetailsVisibleOnClick(false);
         grid.addColumn(new NativeButtonRenderer("OPIS", item -> grid.setDetailsVisible((Activity) item, !grid.isDetailsVisible((Activity) item))));
 
-        labelSelect.setItems("Białystok", "Bielsko Biała", "Chojnice", "Częstochowa", "Elbląg", "Gdańsk", "Gorzów", "Hel", "Jelenia Góra", "Kalisz", "Kasprowy Wierch", "Katowice", "Kętrzyn", "Kielce", "Kłodzko", "Koło", "Kołobrzeg", "Koszalin", "Kozienice", "Kraków", "Krosno", "Legnica", "Lesko", "Leszno", "Lębork", "Lublin", "Łeba", "Łódź",
+        placeholderSelect.setItems("Białystok", "Bielsko Biała", "Chojnice", "Częstochowa", "Elbląg", "Gdańsk", "Gorzów", "Hel", "Jelenia Góra", "Kalisz", "Kasprowy Wierch", "Katowice", "Kętrzyn", "Kielce", "Kłodzko", "Koło", "Kołobrzeg", "Koszalin", "Kozienice", "Kraków", "Krosno", "Legnica", "Lesko", "Leszno", "Lębork", "Lublin", "Łeba", "Łódź",
                 "Mikołajki", "Mława", "Nowy Sącz", "Olsztyn", "Opole", "Ostrołęka", "Piła", "Płock", "Poznań", "Przemyśl", "Racibórz", "Resko", "Rzeszów", "Sandomierz", "Siedlce", "Słubice", "Sulejów", "Suwałki", "Szczecin", "Szczecinek", "Śnieżka", "Świnoujście", "Tarnów", "Terespol", "Toruń", "Ustka", "Warszawa", "Wieluń", "Włodawa", "Wrocław", "Zakopane", "Zamość", "Zielona Góra");
-        labelSelect.setLabel("AKTUALNA POGODA: ");
-        labelSelect.addValueChangeListener(event -> {
+        placeholderSelect.setPlaceholder("POGODA TERAZ");
+        getPlaceholderSelect().setEnabled(true);
+        placeholderSelect.addValueChangeListener(event -> {
             grid.setItems(Stream.empty());
             notification1.open();
             notification1.setPosition(Notification.Position.MIDDLE);
@@ -379,7 +393,7 @@ public class MainView extends VerticalLayout {
             getFilterText().setEnabled(false);
             getInfoBtn().setEnabled(false);
             getAllBtn().setEnabled(false);
-            getPopularBtn().setEnabled(false);
+            getNewestBtn().setEnabled(false);
             getLotteryBtn().setEnabled(false);
             getWhatKindRadioBtn().setReadOnly(true);
             getWhatKindRadioBtn().setValue("");
@@ -391,7 +405,7 @@ public class MainView extends VerticalLayout {
             getSeasonRadioBtn().setValue("");
             getChngFiltersBtn().setEnabled(false);
             getBoredBtn().setEnabled(false);
-            getLabelSelect().setEnabled(false);
+            getPlaceholderSelect().setEnabled(false);
         });
 
         add(menuLt, grid);
@@ -404,7 +418,7 @@ public class MainView extends VerticalLayout {
     }
 
     public void refresh() {
-        grid.setItems(backendClient.getAllActivities());
+        grid.setItems(Stream.empty());
     }
     private void updateList() {
         grid.setItems(backendClient.getAllActivities().stream().filter(activity -> activity.getName().contains(filterText.getValue())).collect(Collectors.toList()));

@@ -43,9 +43,9 @@ public class BackendClient {
 //        restTemplate.postForObject(connectionConfig.getBackApiEndpoint() + "/activity", activity, Activity.class);
 //    }
 
-    public List<Activity> getFavouriteActivities() {
+    public List<Activity> getNewestActivities() {
         try {
-            Optional<Activity[]> boardsResponse = Optional.ofNullable(restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/favourite", Activity[].class));
+            Optional<Activity[]> boardsResponse = Optional.ofNullable(restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/newest", Activity[].class));
             return Arrays.asList(boardsResponse.orElse(new Activity[0]));
         } catch (RestClientException e) {
             LOGGER.error(e.getMessage(), e);
