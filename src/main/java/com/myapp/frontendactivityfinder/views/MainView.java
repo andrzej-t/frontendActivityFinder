@@ -2,6 +2,7 @@ package com.myapp.frontendactivityfinder.views;
 
 import com.myapp.frontendactivityfinder.client.BackendClient;
 import com.myapp.frontendactivityfinder.domain.Activity;
+import com.myapp.frontendactivityfinder.domain.StatisticsDto;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -20,6 +21,7 @@ import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,9 +32,16 @@ public class MainView extends VerticalLayout {
 
     BackendClient backendClient;
 
+    @Autowired
+    StatisticsDto statisticsDto;
+
     Integer clickCounter;
 
-    Button thumbsUpButton = new Button(new Icon(VaadinIcon.THUMBS_UP));
+    Button thumbsUpButton = new Button(new Icon(VaadinIcon.THUMBS_UP), event -> {
+        statisticsDto.setLikeStat(1L);
+        backendClient.updateStatistics(statisticsDto);
+        Notification.show("Dzięki za lajka! \n Liczba polubień: " + backendClient.getLikes(), 1000, Notification.Position.MIDDLE);
+    });
 
     Grid<Activity> grid = new Grid(Activity.class);
 
@@ -40,7 +49,7 @@ public class MainView extends VerticalLayout {
 
     Span content = new Span("Witaj w aplikacji ACTIVITY FINDER! \nJest to narzędzie służące do wyszukiwania wszelkich aktywności, które \n" +
             "pomogą skutecznie zorganizować wolny czas dla twojego dziecka. \nZnajdziesz tu propozycje zarówno wspólnych rodzinnych zabaw, jak i \n" +
-            "zajęć, które twoja pociecha może wykonywać samodzielnie. W zakładce \"ACTIVITY IN ENGLISH\" możesz również odnaleźć losowo wybrane propozycje zajęć dla dorosłych");
+            "zajęć, które twoja pociecha może wykonywać samodzielnie. W zakładce \"ACTIVITY IN ENGLISH\" możesz również odnaleźć losowo wybrane propozycje zajęć dla dorosłych \n");
     NativeButton buttonInside = new NativeButton("Zamknij [x]");
     Notification notification = new Notification(content, buttonInside);
 
@@ -54,7 +63,7 @@ public class MainView extends VerticalLayout {
     Span content2 = new Span();
     Notification notification2 = new Notification(content2, buttonInside2);
     Button boredBtn = new Button("ACTIVITY IN ENGLISH", event -> {
-        content2.setText(backendClient.readBored().getActivity());
+        content2.setText(backendClient.readBored().getActivity() + "\n");
         grid.setItems(Stream.empty());
         notification2.setOpened(true);
         getFilterText().setEnabled(false);
@@ -251,6 +260,8 @@ public class MainView extends VerticalLayout {
                 whereRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
                 chngFiltersBtn.setEnabled(true);
+                statisticsDto.setOneStat(1L);
+                backendClient.updateStatistics(statisticsDto);
             }
             if (event.getValue().equals("2")) {
                 grid.setItems(backendClient.getTwoActivities());
@@ -258,6 +269,8 @@ public class MainView extends VerticalLayout {
                 whereRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
                 chngFiltersBtn.setEnabled(true);
+                statisticsDto.setTwoStat(1L);
+                backendClient.updateStatistics(statisticsDto);
             }
             if (event.getValue().equals("Więcej")) {
                 grid.setItems(backendClient.getMoreActivities());
@@ -265,6 +278,8 @@ public class MainView extends VerticalLayout {
                 whereRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
                 chngFiltersBtn.setEnabled(true);
+                statisticsDto.setMoreStat(1L);
+                backendClient.updateStatistics(statisticsDto);
             }
         });
 
@@ -280,6 +295,8 @@ public class MainView extends VerticalLayout {
                 whereRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
                 chngFiltersBtn.setEnabled(true);
+                statisticsDto.setArtStat(1L);
+                backendClient.updateStatistics(statisticsDto);
             }
             if (event.getValue().equals("Edukacyjne")) {
                 grid.setItems(backendClient.getEducationalActivities());
@@ -287,6 +304,8 @@ public class MainView extends VerticalLayout {
                 whereRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
                 chngFiltersBtn.setEnabled(true);
+                statisticsDto.setEduStat(1L);
+                backendClient.updateStatistics(statisticsDto);
             }
             if (event.getValue().equals("Ruchowe")) {
                 grid.setItems(backendClient.getMotionActivities());
@@ -294,6 +313,8 @@ public class MainView extends VerticalLayout {
                 whereRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
                 chngFiltersBtn.setEnabled(true);
+                statisticsDto.setMotionStat(1l);
+                backendClient.updateStatistics(statisticsDto);
             }
             if (event.getValue().equals("Do auta")) {
                 grid.setItems(backendClient.getInCarActivities());
@@ -301,6 +322,8 @@ public class MainView extends VerticalLayout {
                 whereRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
                 chngFiltersBtn.setEnabled(true);
+                statisticsDto.setCarStat(1L);
+                backendClient.updateStatistics(statisticsDto);
             }
         });
 
@@ -316,6 +339,8 @@ public class MainView extends VerticalLayout {
                 howManyRadioBtn.setReadOnly(true);
                 whereRadioBtn.setReadOnly(true);
                 chngFiltersBtn.setEnabled(true);
+                statisticsDto.setSummerStat(1L);
+                backendClient.updateStatistics(statisticsDto);
             }
             if (event.getValue().equals("Zima")) {
                 grid.setItems(backendClient.getWinterActivities());
@@ -323,6 +348,8 @@ public class MainView extends VerticalLayout {
                 howManyRadioBtn.setReadOnly(true);
                 whereRadioBtn.setReadOnly(true);
                 chngFiltersBtn.setEnabled(true);
+                statisticsDto.setWinterStat(1L);
+                backendClient.updateStatistics(statisticsDto);
             }
         });
 
@@ -337,6 +364,8 @@ public class MainView extends VerticalLayout {
                 howManyRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
                 chngFiltersBtn.setEnabled(true);
+                statisticsDto.setOutdoorStat(1L);
+                backendClient.updateStatistics(statisticsDto);
             }
             if (event.getValue().equals("Wewnątrz")) {
                 grid.setItems(backendClient.getIndoorActivities());
@@ -344,6 +373,8 @@ public class MainView extends VerticalLayout {
                 howManyRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
                 chngFiltersBtn.setEnabled(true);
+                statisticsDto.setIndoorStat(1L);
+                backendClient.updateStatistics(statisticsDto);
             }
         });
 
@@ -382,14 +413,14 @@ public class MainView extends VerticalLayout {
 
         placeholderSelect.setItems("Białystok", "Bielsko Biała", "Chojnice", "Częstochowa", "Elbląg", "Gdańsk", "Gorzów", "Hel", "Jelenia Góra", "Kalisz", "Kasprowy Wierch", "Katowice", "Kętrzyn", "Kielce", "Kłodzko", "Koło", "Kołobrzeg", "Koszalin", "Kozienice", "Kraków", "Krosno", "Legnica", "Lesko", "Leszno", "Lębork", "Lublin", "Łeba", "Łódź",
                 "Mikołajki", "Mława", "Nowy Sącz", "Olsztyn", "Opole", "Ostrołęka", "Piła", "Płock", "Poznań", "Przemyśl", "Racibórz", "Resko", "Rzeszów", "Sandomierz", "Siedlce", "Słubice", "Sulejów", "Suwałki", "Szczecin", "Szczecinek", "Śnieżka", "Świnoujście", "Tarnów", "Terespol", "Toruń", "Ustka", "Warszawa", "Wieluń", "Włodawa", "Wrocław", "Zakopane", "Zamość", "Zielona Góra");
-        placeholderSelect.setPlaceholder("POGODA TERAZ");
-        getPlaceholderSelect().setEnabled(true);
+        placeholderSelect.setPlaceholder("Wybierz miasto");
+        placeholderSelect.setLabel("SPRAWDŹ POGODĘ: ");
         placeholderSelect.addValueChangeListener(event -> {
             grid.setItems(Stream.empty());
             notification1.open();
             notification1.setPosition(Notification.Position.MIDDLE);
             content1.setText(backendClient.readWeather(event.getValue().replace('ą', 'a').replace('ć', 'c').replace('ę', 'e')
-                    .replace('ł', 'l').replace('ń', 'n').replace('ó', 'o').replace('ś', 's').replace('ż', 'z').replaceAll("\\s+","").toLowerCase(Locale.ROOT)).toString());
+                    .replace('ł', 'l').replace('ń', 'n').replace('ó', 'o').replace('ś', 's').replace('Ś', 'S').replace('Ł', 'L').replace('ż', 'z').replace('ź', 'z').replaceAll("\\s+","").toLowerCase(Locale.ROOT)).toString());
             getFilterText().setEnabled(false);
             getInfoBtn().setEnabled(false);
             getAllBtn().setEnabled(false);
