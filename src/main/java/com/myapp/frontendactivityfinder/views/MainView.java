@@ -49,7 +49,7 @@ public class MainView extends VerticalLayout {
 
     Span content = new Span("Witaj w aplikacji ACTIVITY FINDER! \nJest to narzędzie służące do wyszukiwania wszelkich aktywności, które \n" +
             "pomogą skutecznie zorganizować wolny czas dla twojego dziecka. \nZnajdziesz tu propozycje zarówno wspólnych rodzinnych zabaw, jak i \n" +
-            "zajęć, które twoja pociecha może wykonywać samodzielnie. W zakładce \"ACTIVITY IN ENGLISH\" możesz również odnaleźć losowo wybrane propozycje zajęć dla dorosłych \n");
+            "zajęć, które twoja pociecha może wykonywać samodzielnie. W zakładce \"ACTIVITY IN ENGLISH\" możesz również odnaleźć losowo wybrane propozycje zajęć dla dorosłych \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n");
     NativeButton buttonInside = new NativeButton("Zamknij [x]");
     Notification notification = new Notification(content, buttonInside);
 
@@ -169,6 +169,7 @@ public class MainView extends VerticalLayout {
     HorizontalLayout bottomLt = new HorizontalLayout(whatKindRadioBtn, chngFiltersBtn, howManyRadioBtn, whereRadioBtn, seasonRadioBtn, chngFiltersBtn, boredBtn, placeholderSelect, thumbsUpButton);
 
     public MainView(BackendClient backendClient) {
+
         this.backendClient=backendClient;
 
         thumbsUpButton.addClickListener(event -> {
@@ -178,11 +179,18 @@ public class MainView extends VerticalLayout {
             }
         });
 
+        header.getElement().getStyle().set("color", "#535459");
+
         add(header);
 
         chngFiltersBtn.setEnabled(false);
 
         notification.setPosition(Notification.Position.MIDDLE);
+
+        buttonInside.getElement().getStyle()
+                        .set("color", "#f3f5f7")
+                        .set("background", "#014af3");
+
         buttonInside.addClickListener(event -> {
             notification.close();
             getFilterText().setEnabled(true);
@@ -203,6 +211,10 @@ public class MainView extends VerticalLayout {
             getBoredBtn().setEnabled(true);
             getPlaceholderSelect().setEnabled(true);
         });
+
+        buttonInside1.getElement().getStyle()
+                .set("color", "#f3f5f7")
+                .set("background", "#014af3");
 
         notification1.setPosition(Notification.Position.MIDDLE);
         buttonInside1.addClickListener(event -> {
@@ -225,6 +237,10 @@ public class MainView extends VerticalLayout {
             getPlaceholderSelect().setEnabled(true);
             notification1.close();
         });
+
+        buttonInside2.getElement().getStyle()
+                .set("color", "#f3f5f7")
+                .set("background", "#014af3");
 
         notification2.setPosition(Notification.Position.MIDDLE);
         buttonInside2.addClickListener(event -> {

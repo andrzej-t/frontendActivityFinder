@@ -19,10 +19,10 @@ public class Weather {
 
     @Override
     public String toString() {
-        return "POGODA: " + stacja + ";"  + "\n" +
-                "temperatura: " + temperatura + "\u00B0C;" + "\n" +
-                "predkość wiatru: " + predkosc_wiatru + "km/h;" + "\n" +
-                "suma opadu: " + suma_opadu + "mm;" + "\n" +
-                "ciśnienie: " + cisnienie + "hpa;" + "\n";
+        return "POGODA: \n" + stacja + ";"  + "\n" +
+                "temperatura: \n" + temperatura + "\u00B0C;" + "\n" +
+                "predkość wiatru: \n" + predkosc_wiatru + "km/h;" + "\n" +
+                "suma opadu: \n" + suma_opadu + "mm;" + "\n" +
+                "ciśnienie: \n" + cisnienie + "hpa;" + "\n";
     }
 }

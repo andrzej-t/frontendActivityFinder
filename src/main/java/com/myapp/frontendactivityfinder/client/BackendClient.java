@@ -182,18 +182,4 @@ public class BackendClient {
             return new ArrayList<>();
         }
     }
-
-    //    public void createActivity(Activity activity) {
-//        restTemplate.postForObject(connectionConfig.getBackApiEndpoint() + "/activity", activity, Activity.class);
-//    }
-
-    //    public void  updateActivity(Activity activity) {
-//        restTemplate.put(connectionConfig.getBackApiEndpoint() + "/activity", activity, Activity.class);
-//    }
-
-//    public Activity getActivityById(String id) {
-//        Optional<Activity> boardsResponse = Optional.ofNullable(restTemplate.getForObject(connectionConfig.getBackApiEndpoint() + "/activities" + id, Activity.class));
-//        return boardsResponse.orElse(new Activity());
-//    }
-
 }
