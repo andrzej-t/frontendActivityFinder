@@ -38,31 +38,40 @@ public class MainView extends VerticalLayout {
     Integer clickCounter;
 
     Button thumbsUpButton = new Button(new Icon(VaadinIcon.THUMBS_UP), event -> {
+        getThumbsUpButton().setDisableOnClick(true);
         statisticsDto.setLikeStat(1L);
         backendClient.updateStatistics(statisticsDto);
-        Notification.show("Dzięki za lajka! \n Liczba polubień: " + backendClient.getLikes(), 1000, Notification.Position.MIDDLE);
+        Notification.show("Dzięki za lajka! Liczba polubień: " + backendClient.getLikes(), 1500, Notification.Position.MIDDLE);
+        try {
+            for (int i = 0; i < 400000; i++) {
+                System.out.println(i);
+            }
+        } finally {
+            getThumbsUpButton().setEnabled(true);
+        }
     });
 
     Grid<Activity> grid = new Grid(Activity.class);
 
     H4 header = new H4("ACTIVITY FINDER wyszukiwarka zajęć i zabaw dla najmłodszych i nie tylko");
 
-    Span content = new Span("Witaj w aplikacji ACTIVITY FINDER! \nJest to narzędzie służące do wyszukiwania wszelkich aktywności, które \n" +
-            "pomogą skutecznie zorganizować wolny czas dla twojego dziecka. \nZnajdziesz tu propozycje zarówno wspólnych rodzinnych zabaw, jak i \n" +
-            "zajęć, które twoja pociecha może wykonywać samodzielnie. W zakładce \"ACTIVITY IN ENGLISH\" możesz również odnaleźć losowo wybrane propozycje zajęć dla dorosłych \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n \u00A0 \n");
-    NativeButton buttonInside = new NativeButton("Zamknij [x]");
+    Span content = new Span("Witaj w aplikacji ACTIVITY FINDER! Jest to narzędzie służące do wyszukiwania wszelkich aktywności, które " +
+            "pomogą skutecznie zorganizować wolny czas dla Twojego dziecka. Znajdziesz tu propozycje zarówno wspólnych rodzinnych zabaw, jak i " +
+            "zajęć, które Twoja pociecha może wykonywać samodzielnie. W zakładce \"ACTIVITY IN ENGLISH\" możesz również odnaleźć losowo wybrane propozycje zajęć dla dorosłych.");
+    NativeButton buttonInside = new NativeButton("Zamknij");
     Notification notification = new Notification(content, buttonInside);
 
-    NativeButton buttonInside1 = new NativeButton("Zamknij [x]");
+    NativeButton buttonInside1 = new NativeButton("Zamknij");
     Span content1 = new Span();
     Notification notification1 = new Notification(content1, buttonInside1);
 
     Select<String> placeholderSelect = new Select<>();
 
-    NativeButton buttonInside2 = new NativeButton("Close [x]");
+    NativeButton buttonInside2 = new NativeButton("Close");
     Span content2 = new Span();
     Notification notification2 = new Notification(content2, buttonInside2);
     Button boredBtn = new Button("ACTIVITY IN ENGLISH", event -> {
+        getButtonInside2().getElement().getStyle().set("margin", "20% 30% 10% 38%");
         content2.setText(backendClient.readBored().getActivity() + "\n");
         grid.setItems(Stream.empty());
         notification2.setOpened(true);
@@ -86,6 +95,7 @@ public class MainView extends VerticalLayout {
     });
 
     Button infoBtn = new Button("INFO", event -> {
+        getButtonInside().getElement().getStyle().set("margin", "20% 30% 10% 38%");
         grid.setItems(Stream.empty());
         notification.setOpened(true);
         getFilterText().setEnabled(false);
@@ -329,7 +339,7 @@ public class MainView extends VerticalLayout {
                 whereRadioBtn.setReadOnly(true);
                 seasonRadioBtn.setReadOnly(true);
                 chngFiltersBtn.setEnabled(true);
-                statisticsDto.setMotionStat(1l);
+                statisticsDto.setMotionStat(1L);
                 backendClient.updateStatistics(statisticsDto);
             }
             if (event.getValue().equals("Do auta")) {
@@ -420,9 +430,7 @@ public class MainView extends VerticalLayout {
                                 + "<div>[[item.description]]</div>"
                                 + "</div>")
                 .withProperty("description", Activity::getDescription)
-                .withEventHandler("handleClick", activity -> {
-                    grid.getDataProvider().refreshItem(activity);
-                }));
+                .withEventHandler("handleClick", activity -> grid.getDataProvider().refreshItem(activity)));
 
         grid.setDetailsVisibleOnClick(false);
         grid.addColumn(new NativeButtonRenderer("OPIS", item -> grid.setDetailsVisible((Activity) item, !grid.isDetailsVisible((Activity) item))));
@@ -430,8 +438,9 @@ public class MainView extends VerticalLayout {
         placeholderSelect.setItems("Białystok", "Bielsko Biała", "Chojnice", "Częstochowa", "Elbląg", "Gdańsk", "Gorzów", "Hel", "Jelenia Góra", "Kalisz", "Kasprowy Wierch", "Katowice", "Kętrzyn", "Kielce", "Kłodzko", "Koło", "Kołobrzeg", "Koszalin", "Kozienice", "Kraków", "Krosno", "Legnica", "Lesko", "Leszno", "Lębork", "Lublin", "Łeba", "Łódź",
                 "Mikołajki", "Mława", "Nowy Sącz", "Olsztyn", "Opole", "Ostrołęka", "Piła", "Płock", "Poznań", "Przemyśl", "Racibórz", "Resko", "Rzeszów", "Sandomierz", "Siedlce", "Słubice", "Sulejów", "Suwałki", "Szczecin", "Szczecinek", "Śnieżka", "Świnoujście", "Tarnów", "Terespol", "Toruń", "Ustka", "Warszawa", "Wieluń", "Włodawa", "Wrocław", "Zakopane", "Zamość", "Zielona Góra");
         placeholderSelect.setPlaceholder("Wybierz miasto");
-        placeholderSelect.setLabel("SPRAWDŹ POGODĘ: ");
+        placeholderSelect.setLabel("AKTUALNA POGODA: ");
         placeholderSelect.addValueChangeListener(event -> {
+            getButtonInside1().getElement().getStyle().set("margin", "20% 30% 10% 38%");
             grid.setItems(Stream.empty());
             notification1.open();
             notification1.setPosition(Notification.Position.MIDDLE);
